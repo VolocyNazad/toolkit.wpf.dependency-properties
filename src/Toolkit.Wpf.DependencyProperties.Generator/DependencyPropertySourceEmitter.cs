@@ -17,7 +17,6 @@ internal static class DependencyPropertySourceEmitter
     private const string FrameworkMetadataType = "global::System.Windows.FrameworkPropertyMetadata";
     private const string MetadataType = "global::System.Windows.PropertyMetadata";
     private const string OptionsType = "global::System.Windows.FrameworkPropertyMetadataOptions";
-    private const string UpdateSourceTriggerType = "global::System.Windows.Data.UpdateSourceTrigger";
     private const string CategoryAttribute = "global::System.ComponentModel.CategoryAttribute";
     private const string DescriptionAttribute = "global::System.ComponentModel.DescriptionAttribute";
     private const string TypeConverterAttribute = "global::System.ComponentModel.TypeConverterAttribute";
@@ -121,8 +120,9 @@ internal static class DependencyPropertySourceEmitter
         source.AppendLine($"{indent}    flags: {OptionsExpression(property)},");
         source.AppendLine($"{indent}    propertyChangedCallback: {CallbackExpression(property)},");
         source.AppendLine($"{indent}    coerceValueCallback: {property.CoerceCallbackName ?? "null"},");
-        source.AppendLine($"{indent}    isAnimationProhibited: false,");
-        source.AppendLine($"{indent}    defaultUpdateSourceTrigger: {UpdateSourceTriggerExpression(property)}),");
+        source.AppendLine($"{indent}    isAnimationProhibited: false{(property.UpdateSourceTriggerExpression.Length > 0 ? "," : "),")}");
+        if (property.UpdateSourceTriggerExpression.Length > 0)
+            source.AppendLine($"{indent}    defaultUpdateSourceTrigger: {property.UpdateSourceTriggerExpression}),");
     }
 
     private static void AppendInstanceProperty(StringBuilder source, DependencyPropertyModel property)
@@ -246,13 +246,6 @@ internal static class DependencyPropertySourceEmitter
     private static string OptionsExpression(DependencyPropertyModel property)
     {
         return property.OptionsExpression.Length > 0 ? property.OptionsExpression : $"{OptionsType}.None";
-    }
-
-    private static string UpdateSourceTriggerExpression(DependencyPropertyModel property)
-    {
-        return property.UpdateSourceTriggerExpression.Length > 0
-            ? property.UpdateSourceTriggerExpression
-            : $"{UpdateSourceTriggerType}.Default";
     }
 
     private static string CallbackExpression(DependencyPropertyModel property)
