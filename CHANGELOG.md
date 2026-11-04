@@ -6,6 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-04
+
 ### Fixed
 
 - A property that sets `Options` but not `DefaultUpdateSourceTrigger` failed at runtime: the generated
