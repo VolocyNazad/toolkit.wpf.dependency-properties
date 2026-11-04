@@ -217,6 +217,55 @@ public sealed class DependencyPropertyGeneratorTests
             generated,
             StringComparison.Ordinal);
         Assert.Contains("defaultValue: 1.0,", generated, StringComparison.Ordinal);
+        Assert.Contains("isAnimationProhibited: false),", generated, StringComparison.Ordinal);
+        Assert.DoesNotContain("defaultUpdateSourceTrigger:", generated, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Explicit_update_source_trigger_is_emitted()
+    {
+        const string source = """
+            using VolocyNazad.Wpf.DependencyProperties;
+
+            namespace Sample;
+
+            [GenerateDependencyProperty<string>(
+                "Text",
+                IsNullable = true,
+                Options = System.Windows.FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                DefaultUpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged)]
+            public sealed partial class SampleView
+            {
+            }
+            """;
+
+        string generated = GeneratorRunner.GeneratedText(GeneratorRunner.Run(source));
+
+        Assert.Contains(
+            "defaultUpdateSourceTrigger: global::System.Windows.Data.UpdateSourceTrigger.PropertyChanged),",
+            generated,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Metadata_with_options_and_no_update_source_trigger_initializes()
+    {
+        const string source = """
+            using System.Windows.Input;
+            using VolocyNazad.Wpf.DependencyProperties;
+
+            namespace Sample;
+
+            [GenerateAttachedDependencyProperty<ICommand>(
+                "HelpCommand",
+                IsNullable = true,
+                Options = System.Windows.FrameworkPropertyMetadataOptions.Inherits)]
+            public static partial class SampleAttached
+            {
+            }
+            """;
+
+        GeneratorRunner.RunAndLoad(source, "Sample.SampleAttached", "HelpCommandProperty");
     }
 
     [Fact]

@@ -6,6 +6,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- A property that sets `Options` but not `DefaultUpdateSourceTrigger` failed at runtime: the generated
+  `FrameworkPropertyMetadata` passed `UpdateSourceTrigger.Default`, which the WPF constructor rejects, so
+  the type initializer of the declaring type threw. The registration now uses the five-argument
+  constructor unless a trigger is specified explicitly.
+
 ## [1.0.0] - 2026-11-04
 
 ### Added

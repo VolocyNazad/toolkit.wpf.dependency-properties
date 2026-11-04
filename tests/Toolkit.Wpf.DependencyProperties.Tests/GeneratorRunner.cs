@@ -1,8 +1,10 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Emit;
 using Toolkit.Wpf.DependencyProperties.Generator;
 using System.Collections.Immutable;
 using System.IO;
+using System.Reflection;
 using Xunit;
 
 namespace Toolkit.Wpf.DependencyProperties.Tests;
@@ -51,6 +53,42 @@ internal static class GeneratorRunner
             result.Results
                 .SelectMany(static runResult => runResult.GeneratedSources)
                 .Select(static generated => generated.SourceText.ToString()));
+    }
+
+    /// <summary>
+    /// Runs the generator, compiles the generated source together with the input and touches the static
+    /// dependency property field, so a broken registration fails as it would at runtime.
+    /// </summary>
+    /// <param name="source">The source to compile and annotate.</param>
+    /// <param name="typeName">The fully qualified name of the annotated type.</param>
+    /// <param name="staticFieldName">The static field whose type initializer registers the property.</param>
+    public static void RunAndLoad(string source, string typeName, string staticFieldName)
+    {
+        CSharpParseOptions parseOptions = new(LanguageVersion.Preview);
+        CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+        SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source, parseOptions, cancellationToken: cancellationToken);
+        CSharpCompilation compilation = CSharpCompilation.Create(
+            $"GeneratorRuntimeTests{Guid.NewGuid():N}",
+            [syntaxTree],
+            References,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(
+            [new DependencyPropertyGenerator().AsSourceGenerator()],
+            additionalTexts: null,
+            parseOptions,
+            optionsProvider: null);
+        driver = driver.RunGenerators(compilation, cancellationToken);
+        compilation = compilation.AddSyntaxTrees(driver.GetRunResult().GeneratedTrees);
+
+        using MemoryStream assembly = new();
+        EmitResult emitResult = compilation.Emit(assembly, cancellationToken: cancellationToken);
+        Assert.True(emitResult.Success, string.Join(Environment.NewLine, emitResult.Diagnostics));
+
+        Type type = Assembly.Load(assembly.ToArray()).GetType(typeName, throwOnError: true)!;
+        FieldInfo? field = type.GetField(staticFieldName, BindingFlags.Public | BindingFlags.Static);
+        Assert.NotNull(field);
+        field.GetValue(null);
     }
 
     private static ImmutableArray<MetadataReference> CreateReferences()
