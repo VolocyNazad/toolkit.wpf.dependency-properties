@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <!-- Do not include the generator as a lib dependency -->
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <EnablePackageValidation>true</EnablePackageValidation>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Authors>VolocyNazad</Authors>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Copyright>Copyright © VolocyNazad</Copyright>
+    <Description>Roslyn source generator for WPF dependency properties: registration, CLR property or Get/Set accessors, XML documentation and change callback wiring.</Description>
+    <PackageTags>source-generator;dependency-property;wpf;xaml;roslyn;dotnet</PackageTags>
+    <PackageId>VolocyNazad.Wpf.DependencyPropertyGenerator</PackageId>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/VolocyNazad/toolkit.wpf.dependency-properties</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageOutputPath>..\..\artifacts\</PackageOutputPath>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/VolocyNazad/toolkit.wpf.dependency-properties</RepositoryUrl>
+    <PackageReleaseNotes>https://github.com/VolocyNazad/toolkit.wpf.dependency-properties/blob/main/CHANGELOG.md</PackageReleaseNotes>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="" Visible="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--Package the generator in the analyzer directory of the nuget package-->
+    <None Include="$(MSBuildThisFileDirectory)..\Toolkit.Wpf.DependencyProperties.Generator\bin\$(Configuration)\netstandard2.0\Toolkit.Wpf.DependencyProperties.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+</Project>

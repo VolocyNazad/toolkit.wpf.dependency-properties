@@ -1,0 +1,22 @@
+# Changelog
+
+All notable changes to this project are documented in this file.
+
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [Unreleased]
+
+### Added
+
+- Initial source generator: generates the `DependencyProperty` registration, the CLR wrapper or the
+  `Get`/`Set` accessors, the XML documentation and the change callback wiring for
+  `[GenerateDependencyProperty<T>]` and `[GenerateAttachedDependencyProperty<T>]`.
+- Both callback forms are accepted: the canonical WPF
+  `(DependencyObject, DependencyPropertyChangedEventArgs)` static method and the generated partial
+  hooks; a method named for the property that matches neither form fails the build (`VDP0004`).
+- Diagnostics `VDP0001`-`VDP0008` report an unusable declaration (a non-`partial` type, an attached
+  property outside a static class, a generic or nested declaring type, an invalid property name, a
+  missing named callback, a conflicting callback declaration) at compile time.
+- Attribute arguments for the default value, read-only metadata, `FrameworkPropertyMetadataOptions`,
+  the default update source trigger, `Category`, `Description`, `TypeConverter`, a shared callback
+  name, the browsable-for type and raw XML documentation.
