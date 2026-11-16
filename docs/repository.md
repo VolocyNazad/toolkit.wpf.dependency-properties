@@ -66,7 +66,7 @@ tests/
 - `Microsoft.CodeAnalysis.CSharp` is exact-pinned (`[4.14.0]`) - the Roslyn
   version shipped with the latest Visual Studio 2022 17.14 line, so the generator
   stays loadable by any current VS 2022 install. See the
-  [Roslyn compatibility policy](policies/development.md#roslyn-compatibility).
+  [Roslyn compatibility policy](policies/build.md#roslyn-compatibility).
 - MinVer with the `v` tag prefix, as configured by `MinVerTagPrefix` in
   `Directory.Build.props`.
 - Tests target `net10.0-windows` with `UseWPF=true` and use xUnit v3 through
@@ -77,13 +77,13 @@ tests/
 ## Documentation layout
 
 - `AGENTS.md` links to the required repository guidance.
-- `docs/policies/development.md` contains the development policy.
+- `docs/policies/` contains the repository policies; the [policy index](policies/README.md) says what each one covers.
 - `docs/repository.md` describes the project, repository structure, and technology stack.
 - `CHANGELOG.md` records changes under `Unreleased` before release.
 
 The root solution exposes the documentation files under a `docs` solution folder in Visual Studio, preserving their subfolder structure. When adding documentation files, also add them as solution items; solution folders do not automatically include new files.
 
-The root `global.json` selects stable .NET SDK 10.0 (minimum `10.0.103`, `rollForward: latestFeature`). CI and publishing install the SDK from this file. See the [SDK selection policy](policies/development.md#net-sdk-selection).
+The root `global.json` selects stable .NET SDK 10.0 (minimum `10.0.103`, `rollForward: latestFeature`). CI and publishing install the SDK from this file. See the [SDK selection policy](policies/build.md#sdk-selection).
 
 ## Solution items
 
@@ -91,19 +91,19 @@ The root solution exposes repository-level documents and configuration under
 `solutionItems`, GitHub files and maintenance scripts in matching subfolders, and
 documentation under `docs/`. The list is explicit, not a filesystem glob; keep
 links up to date when files change. See the solution items policy in the
-[development policy](policies/development.md#solution-items).
+[repository maintenance policy](policies/repository-maintenance.md#solution-items).
 
 ## Repository validation
 
 `scripts/Validate-Repository.ps1` enforces the required repository documents,
 their navigation links, and complete, valid Solution Items. The
 `.github/workflows/repository-policy.yml` workflow runs it for pushes and pull
-requests. See the [development policy](policies/development.md#repository-validation).
+requests. See the [repository maintenance policy](policies/repository-maintenance.md#repository-validation).
 
 ## Formatting
 
 The root `.editorconfig` defines the portable formatting baseline. See the
-[development policy](policies/development.md#formatting-baseline).
+[repository maintenance policy](policies/repository-maintenance.md#formatting-baseline).
 
 ## Testing
 
@@ -125,4 +125,4 @@ Bump component, applied to generator changes:
 - **MINOR** - a new capability: a new attribute argument, a new generated member form, a new diagnostic, or support for a declaration shape that previously reported an error.
 - **PATCH** - a bug fix: a wrong generated member, a false positive or false negative diagnostic, a packaging fix, or documentation.
 
-The tagged commit must already contain the release section in `CHANGELOG.md` with an empty `Unreleased` section above it; the publish workflow stops otherwise. See the [release changelog policy](policies/development.md#release-changelog).
+The tagged commit must already contain the release section in `CHANGELOG.md` with an empty `Unreleased` section above it; the publish workflow stops otherwise. See the [release changelog policy](policies/changelog.md#release).
