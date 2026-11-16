@@ -85,10 +85,10 @@ public sealed class DependencyPropertyGenerator : IIncrementalGenerator
             ? attribute.ConstructorArguments[0].Value as string ?? string.Empty
             : string.Empty;
 
-        Dictionary<string, TypedConstant> arguments = new(StringComparer.Ordinal);
-        foreach (KeyValuePair<string, TypedConstant> argument in attribute.NamedArguments)
-            arguments[argument.Key] = argument.Value;
-
+        Dictionary<string, TypedConstant> arguments = attribute.NamedArguments.ToDictionary(
+            static argument => argument.Key,
+            static argument => argument.Value,
+            StringComparer.Ordinal);
         if (arguments.TryGetValue("IsNullable", out TypedConstant isNullable)
             && isNullable.Value is true
             && propertyType.IsReferenceType)
