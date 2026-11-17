@@ -2,16 +2,17 @@
 
 Paths mentioned in this policy are relative to the repository root unless a Markdown link specifies otherwise.
 
+Read when: adding a benchmark or reporting measurements.
+
 Performance work is measured, not estimated. A claim about speed is backed by numbers from a
 repeatable run on a stated environment.
 
 ## When
 
 - a `perf:` change;
-- a change to a hot path: parsing, serialization, collection handling, the file system or
-  start-up;
-- a user-visible claim about speed or memory in a pull request, the changelog or the
-  documentation.
+- a change to the generator pipeline: the incremental provider, the model or the source emitter;
+- a user-visible claim about generator speed, build time or memory in a pull request, the changelog or
+  the documentation.
 
 ## How
 
@@ -22,8 +23,8 @@ Benchmarks live in `benchmarks/<Project>.Benchmarks` and use
   on an otherwise idle machine;
 - run with `dotnet run -c Release --project benchmarks/<Project>.Benchmarks -- --filter
   "*<Benchmarks>*"`;
-- a benchmark that compiles differently per build configuration runs on each of those
-  configurations, so the numbers match the shipped code;
+- benchmark the generator over a fixed in-memory compilation, the same input for every case, so the
+  numbers describe the pipeline and not the machine's disk;
 - compare against the current `main`/`dev` baseline in the same session; a number from another
   machine or day is not a comparison.
 
